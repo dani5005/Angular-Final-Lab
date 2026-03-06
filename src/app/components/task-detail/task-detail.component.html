@@ -1,0 +1,8 @@
+
+<h2>Task Detail</h2>
+
+<div *ngIf="task">
+
+<p><b>ID:</b> {{task.id}}</p>
+<p><b>Title:</b> {{task.title}}</p>
+<p><b>Status:</b> {{task.completed | taskStatus}}</p></div>
