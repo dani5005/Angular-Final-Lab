@@ -58,14 +58,16 @@ Clonar el repositorio:
 
 git clone https://github.com/dani5005/Angular-Final-Lab.git
 
-# Instalación Entrar en el proyecto:
+# Entrar en el proyecto:
 
-cd angular-task-manager
+cd todo-app
 
 # Instalar dependencias:
 
 npm install
-Ejecutar la aplicación
+
+# Ejecutar la aplicación
+
 ng serve
 
 # Abrir en el navegador:
