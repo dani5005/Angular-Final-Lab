@@ -60,7 +60,7 @@ git clone https://github.com/dani5005/Angular-Final-Lab.git
 
 # Entrar en el proyecto:
 
-cd todo-app
+cd Angular-Final-Lab
 
 # Instalar dependencias:
 
