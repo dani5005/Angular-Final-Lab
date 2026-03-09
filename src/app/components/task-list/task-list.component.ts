@@ -1,4 +1,3 @@
-
 import { Component, OnInit, DestroyRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -9,66 +8,68 @@ import { TaskStatusPipe } from '../../pipes/task-status.pipe';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
-  selector:'app-task-list',
-  standalone:true,
+  selector: 'app-task-list',
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports:[CommonModule,FormsModule,RouterLink,TaskStatusPipe],
-  templateUrl:'./task-list.component.html'
+  imports: [CommonModule, FormsModule, RouterLink, TaskStatusPipe],
+  templateUrl: './task-list.component.html'
 })
-export class TaskListComponent implements OnInit{
+export class TaskListComponent implements OnInit {
 
- tasks:Task[] = [];
- filterStatus='all';
- private readonly destroyRef = inject(DestroyRef);
+  tasks: Task[] = [];
+  filterStatus: 'all' | 'completed' | 'pending' = 'all';
 
- constructor(private readonly taskService:TaskService){}
+  private readonly taskService = inject(TaskService);
+  private readonly destroyRef = inject(DestroyRef);
 
-ngOnInit(){
+  ngOnInit(): void {
 
-  if(this.taskService.getTasks().length === 0){
+    const existingTasks = this.taskService.getTasks();
 
-    this.taskService.loadTasks()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(data => {
+    if (existingTasks.length === 0) {
 
-        this.taskService.setTasks(data.slice(0,20));
-        this.tasks = this.taskService.getTasks();
+      this.taskService.loadTasks()
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(data => {
 
-      });
+          this.taskService.setTasks(data.slice(0, 20));
+          this.tasks = this.taskService.getTasks();
 
-  } else {
+        });
 
-    this.tasks = this.taskService.getTasks();
+    } else {
+
+      this.tasks = existingTasks;
+
+    }
+  }
+
+  filteredTasks(): Task[] {
+
+    switch (this.filterStatus) {
+      case 'completed':
+        return this.tasks.filter(t => t.completed);
+
+      case 'pending':
+        return this.tasks.filter(t => !t.completed);
+
+      default:
+        return this.tasks;
+    }
 
   }
 
-}
+  deleteTask(id: number): void {
 
- filteredTasks(){
+    if (confirm('Delete task?')) {
+      this.taskService.deleteTask(id);
+      this.tasks = this.taskService.getTasks();
+    }
 
-  if(this.filterStatus==='completed'){
-    return this.tasks.filter(t=>t.completed);
   }
 
-  if(this.filterStatus==='pending'){
-    return this.tasks.filter(t=>!t.completed);
+  trackByTaskId(index: number, task: Task): number {
+    return task.id;
   }
-
-  return this.tasks;
-
- }
-
- deleteTask(id:number){
-
-  if(confirm("Delete task?")){
-    this.taskService.deleteTask(id);
-    this.tasks = this.taskService.getTasks();
-  }
-
- }
-
- trackByTaskId(index: number, task: Task){
-  return task.id;
-}
 
 }

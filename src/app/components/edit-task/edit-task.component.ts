@@ -1,5 +1,5 @@
 
-import { Component,OnInit, ChangeDetectionStrategy  } from '@angular/core';
+import { Component,OnInit, ChangeDetectionStrategy, inject  } from '@angular/core';
 import { ActivatedRoute,Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -17,11 +17,9 @@ export class EditTaskComponent implements OnInit{
 
  task?:Task;
 
- constructor(
-  private readonly route:ActivatedRoute,
-  private readonly router:Router,
-  private readonly taskService:TaskService
- ){}
+ private readonly route = inject(ActivatedRoute);
+ private readonly router = inject(Router);
+ private readonly taskService = inject(TaskService);
 
  ngOnInit(){
 

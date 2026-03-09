@@ -1,5 +1,5 @@
 
-import { Component, ChangeDetectionStrategy  } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject  } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -22,10 +22,8 @@ export class AddTaskComponent{
   completed:false
  };
 
- constructor(
-  private readonly taskService:TaskService,
-  private readonly router:Router
- ){}
+private readonly taskService = inject(TaskService);
+private readonly router = inject(Router);
 
  addTask(){
 

@@ -1,5 +1,5 @@
 
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../services/task.service';
@@ -17,10 +17,8 @@ export class TaskDetailComponent implements OnInit{
 
  task?:Task;
 
- constructor(
-  private readonly route:ActivatedRoute,
-  private readonly taskService:TaskService
- ){}
+private readonly taskService = inject(TaskService);
+private readonly route = inject(ActivatedRoute);
 
  ngOnInit(){
   const id = Number(this.route.snapshot.paramMap.get('id'));

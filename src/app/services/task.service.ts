@@ -1,5 +1,4 @@
-
-import { Injectable } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Task } from '../models/task.model';
@@ -10,39 +9,43 @@ import { Task } from '../models/task.model';
 export class TaskService {
 
   private readonly apiUrl = 'https://jsonplaceholder.typicode.com/todos';
-  private tasks: Task[] = [];
 
-  constructor(private readonly http: HttpClient) {}
+  private readonly http = inject(HttpClient);
+
+  private readonly tasks = signal<Task[]>([]);
 
   loadTasks(): Observable<Task[]> {
     return this.http.get<Task[]>(this.apiUrl);
   }
 
-  setTasks(tasks: Task[]) {
-    this.tasks = tasks;
+  setTasks(newTasks: Task[]) {
+    this.tasks.set(newTasks);
   }
 
   getTasks(): Task[] {
-    return this.tasks;
+    return this.tasks();
   }
 
-  getTask(id:number){
-    return this.tasks.find(t => t.id === id);
+  getTask(id: number): Task | undefined {
+    return this.tasks().find(t => t.id === id);
   }
 
-  addTask(task:Task){
-    task.id = this.tasks.length + 1;
-    this.tasks.push(task);
+  addTask(task: Task) {
+    this.tasks.update(tasks => [
+      ...tasks,
+      { ...task, id: tasks.length + 1 }
+    ]);
   }
 
-  updateTask(task:Task){
-    const index = this.tasks.findIndex(t=>t.id===task.id);
-    if(index>-1){
-      this.tasks[index] = task;
-    }
+  updateTask(task: Task) {
+    this.tasks.update(tasks =>
+      tasks.map(t => t.id === task.id ? task : t)
+    );
   }
 
-  deleteTask(id:number){
-    this.tasks = this.tasks.filter(t=>t.id!==id);
+  deleteTask(id: number) {
+    this.tasks.update(tasks =>
+      tasks.filter(t => t.id !== id)
+    );
   }
 }
