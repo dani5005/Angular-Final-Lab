@@ -1,15 +1,17 @@
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, DestroyRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TaskService } from '../../services/task.service';
 import { Task } from '../../models/task.model';
 import { TaskStatusPipe } from '../../pipes/task-status.pipe';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector:'app-task-list',
   standalone:true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports:[CommonModule,FormsModule,RouterLink,TaskStatusPipe],
   templateUrl:'./task-list.component.html'
 })
@@ -17,21 +19,30 @@ export class TaskListComponent implements OnInit{
 
  tasks:Task[] = [];
  filterStatus='all';
+ private readonly destroyRef = inject(DestroyRef);
 
- constructor(private taskService:TaskService){}
+ constructor(private readonly taskService:TaskService){}
 
- ngOnInit(){
+ngOnInit(){
 
-  if(this.taskService.getTasks().length===0){
-    this.taskService.loadTasks().subscribe(data=>{
-      this.taskService.setTasks(data.slice(0,20));
-      this.tasks = this.taskService.getTasks();
-    });
-  }else{
+  if(this.taskService.getTasks().length === 0){
+
+    this.taskService.loadTasks()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(data => {
+
+        this.taskService.setTasks(data.slice(0,20));
+        this.tasks = this.taskService.getTasks();
+
+      });
+
+  } else {
+
     this.tasks = this.taskService.getTasks();
+
   }
 
- }
+}
 
  filteredTasks(){
 
@@ -55,4 +66,9 @@ export class TaskListComponent implements OnInit{
   }
 
  }
+
+ trackByTaskId(index: number, task: Task){
+  return task.id;
+}
+
 }

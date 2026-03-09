@@ -9,10 +9,10 @@ import { Task } from '../models/task.model';
 })
 export class TaskService {
 
-  private apiUrl = 'https://jsonplaceholder.typicode.com/todos';
+  private readonly apiUrl = 'https://jsonplaceholder.typicode.com/todos';
   private tasks: Task[] = [];
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   loadTasks(): Observable<Task[]> {
     return this.http.get<Task[]>(this.apiUrl);

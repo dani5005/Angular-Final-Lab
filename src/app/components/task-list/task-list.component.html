@@ -9,8 +9,8 @@
 
 <ul>
 
-<li *ngFor="let task of filteredTasks()">
-
+<li *ngFor="let task of filteredTasks(); trackBy: trackByTaskId">
+  
 <span
   [class.completed]="task.completed"
   [class.pending]="!task.completed"

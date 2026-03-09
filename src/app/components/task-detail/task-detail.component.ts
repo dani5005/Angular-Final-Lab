@@ -1,5 +1,5 @@
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../services/task.service';
@@ -9,6 +9,7 @@ import { Task } from '../../models/task.model';
 @Component({
  selector:'app-task-detail',
  standalone:true,
+ changeDetection: ChangeDetectionStrategy.OnPush,
  imports:[CommonModule,TaskStatusPipe],
  templateUrl:'./task-detail.component.html'
 })
@@ -17,8 +18,8 @@ export class TaskDetailComponent implements OnInit{
  task?:Task;
 
  constructor(
-  private route:ActivatedRoute,
-  private taskService:TaskService
+  private readonly route:ActivatedRoute,
+  private readonly taskService:TaskService
  ){}
 
  ngOnInit(){
